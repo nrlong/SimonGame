@@ -7,6 +7,7 @@ $(".btn").click(function(){
     var userChosenClick = $(this).attr("id");
     userPattern.push(userChosenClick);
     playSound(userChosenClick);
+    animatePress(userChosenClick);
 })
 
 function nextSequence(){
@@ -20,4 +21,12 @@ function nextSequence(){
 function playSound(name){
     var sound = new Audio("sounds/" + name + ".mp3")
     sound.play();
+}
+
+function animatePress(currentColor){
+    $("#" + currentColor).addClass("pressed");
+    setTimeout(() => {
+       $("#" + currentColor).removeClass("pressed") 
+    }, 100);
+    
 }

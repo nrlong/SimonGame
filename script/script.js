@@ -6,38 +6,71 @@ var started = false;
 var level = 0;
 
 
-$(".btn").click(function(){
+$(document).keypress(function () {
+    if (!started) {
+        $("#level-title").text("Level " + level);
+        nextSequence();
+        started = true;
+    }
+});
+
+$(".btn").click(function () {
     var userChosenClick = $(this).attr("id");
     userPattern.push(userChosenClick);
     playSound(userChosenClick);
     animatePress(userChosenClick);
-})
+    checkAnswer(userPattern.length-1);
+});
 
-function nextSequence(){
-    var randomNumber = Math.floor(Math.random() *4);
+
+
+function checkAnswer(currentLevel){
+    if(gamePattern[currentLevel] === userPattern[currentLevel]){
+        console.log("success");
+        if(userPattern.length === gamePattern.length){
+            setTimeout(() => {
+               nextSequence(); 
+            }, 1000);
+        }
+        }else{
+            console.log("wrong");
+            playSound("wrong");
+            $("body").addClass("game-over");
+            setTimeout(() => {
+               $("body").removeClass("game-over") 
+            }, 200);
+
+            $("#level-title").text("Game Over, Press Any Key to Restart");
+            startOver();
+    }
+}
+
+function nextSequence() {
+    userPattern=[];
+    level++
+    $("#level-title").text("Level " + level);
+    var randomNumber = Math.floor(Math.random() * 4);
     var randomChosenColor = buttonColor[randomNumber];
     gamePattern.push(randomChosenColor);
-    $("#"+randomChosenColor).fadeIn(100).fadeOut(100).fadeIn(100);
+    $("#" + randomChosenColor).fadeIn(100).fadeOut(100).fadeIn(100);
     playSound(randomChosenColor);
 }
 
-function playSound(name){
+function playSound(name) {
     var sound = new Audio("sounds/" + name + ".mp3")
     sound.play();
 }
 
-function animatePress(currentColor){
+function animatePress(currentColor) {
     $("#" + currentColor).addClass("pressed");
     setTimeout(() => {
-       $("#" + currentColor).removeClass("pressed") 
+        $("#" + currentColor).removeClass("pressed")
     }, 100);
-    
+
 }
 
-$(document).keypress(function(){ 
-    if (!started){
-        $("#level-title").text("Level " + level);
-        nextSequence();
-        started=true;
-    }
-});
+function startOver(){
+    level = 0
+    gamePattern =[]
+    started = false;
+}
